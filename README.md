@@ -3,7 +3,7 @@
 
 # Инструкция использования:
 
-+ Заходим на сайте [Manga](https://manga-online.biz/)
++ Зходим на сайт [Manga](https://manga-online.biz/)
 + Выбираем нужную мангу
     + Так должна выглядить нумерация глав для корректной работы (т.е нумерация идет с первой главы, а не начинается заново с каждой новой главы)
         + ![Image](https://github.com/JustKaneri/MangaParser/blob/master/Tak.png)
