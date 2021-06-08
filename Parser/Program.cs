@@ -90,13 +90,20 @@ namespace Parser
         {
             FileInfo fl = new FileInfo(LastFile);
             int lengNow = 0;
-            int ling = int.Parse(GetFileSize(new Uri(LinkFile))) / 1024 / 1024; ;
+            int ling = int.Parse(GetFileSize(new Uri(LinkFile))) / 1024 ; ;
+            int cursPos = Console.CursorTop;
+
             do
             {
                 fl = new FileInfo(LastFile);
-                lengNow = int.Parse((fl.Length/1024/1024).ToString());
+                lengNow = int.Parse((fl.Length/1024).ToString());
+                Console.SetCursorPosition(0, cursPos);
+                Console.CursorVisible = false;
+                Console.Write(" Загруженно "+lengNow+"Kb из " + ling+"Kb");
 
             } while (ling != lengNow);
+            Console.CursorVisible = true;
+            Console.WriteLine();
         }
 
         /// <summary>
@@ -165,10 +172,12 @@ namespace Parser
             Name = arrayInfo[3];
 
             Enumeration();
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Ожидайте окончательной загрузки");
-            Console.ForegroundColor = ConsoleColor.White;
-            FinishidDomlodal();
+
+            Thread.Sleep(500);
+            //Console.ForegroundColor = ConsoleColor.Green;
+            //Console.WriteLine("Ожидайте окончательной загрузки");
+            //Console.ForegroundColor = ConsoleColor.White;
+            //FinishidDomlodal();
         }
 
         /// <summary>
@@ -176,7 +185,7 @@ namespace Parser
         /// </summary>
         private static void Enumeration()
         {
-            for (int glav = Glav; glav <= GlavNado; glav++)
+            for (int glav = Glav; glav < GlavNado+Glav; glav++)
             {
                 string link = "https://manga-online.biz/" + Name + "/" + Tom + "/" + glav + "/" + 1 + "/";
                 string html = HtmlPack(link);
