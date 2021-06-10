@@ -38,7 +38,6 @@ namespace Parser
         /// </summary>
         private static string LinkFile ="";
 
-
         private static string[] Logo = {"███╗   ███╗ █████╗ ███╗  ██╗ ██████╗  █████╗ ",
                                         "████╗ ████║██╔══██╗████╗ ██║██╔════╝ ██╔══██╗",
                                         "██╔████╔██║███████║██╔██╗██║██║  ██╗ ███████║",
