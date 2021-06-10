@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Parser
 {
-    class Program
+    class Programт
     {
         /// <summary>
         /// Путь для хранения.
@@ -188,6 +188,7 @@ namespace Parser
             for (int glav = Glav; glav < GlavNado+Glav; glav++)
             {
                 string link = "https://manga-online.biz/" + Name + "/" + Tom + "/" + glav + "/" + 1 + "/";
+                Console.WriteLine(link);
                 string html = HtmlPack(link);
                 string linkfile = GetHref(html);
                 LinkFile = linkfile;
@@ -196,6 +197,7 @@ namespace Parser
                 if (linkfile == "" || System.IO.Path.GetExtension(linkfile) != ".zip")
                 {
                     Tom++;
+                    glav--;
                 }
                 else
                 {
