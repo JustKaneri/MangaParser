@@ -188,7 +188,6 @@ namespace Parser
             for (int glav = Glav; glav < GlavNado+Glav; glav++)
             {
                 string link = "https://manga-online.biz/" + Name + "/" + Tom + "/" + glav + "/" + 1 + "/";
-                Console.WriteLine(link);
                 string html = HtmlPack(link);
                 string linkfile = GetHref(html);
                 LinkFile = linkfile;
