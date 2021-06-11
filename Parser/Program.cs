@@ -4,6 +4,9 @@ using HtmlAgilityPack;
 using System.Net;
 using System.Threading;
 using System.IO;
+using System.Collections.Generic;
+using System.IO.Compression;
+using System.Linq;
 
 namespace Parser
 {
@@ -38,6 +41,8 @@ namespace Parser
         /// </summary>
         private static string LinkFile ="";
 
+        private static List<string> Files = new List<string>();
+
         private static string[] Logo = {"███╗   ███╗ █████╗ ███╗  ██╗ ██████╗  █████╗ ",
                                         "████╗ ████║██╔══██╗████╗ ██║██╔════╝ ██╔══██╗",
                                         "██╔████╔██║███████║██╔██╗██║██║  ██╗ ███████║",
@@ -51,6 +56,9 @@ namespace Parser
                                         "██╔═══╝ ██╔══██║██╔══██╗ ╚═══██╗██╔══╝  ██╔══██╗",
                                         "██║     ██║  ██║██║  ██║██████╔╝███████╗██║  ██║",
                                         "╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝"};
+
+        private static string[] company = { "▀█▀ █ █ █▀▀   █▄▀ ▄▀█ █▄ █ █▀▀ █▀█ █   █▀▀ █▀█ █▀▄▀█ █▀█ ▄▀█ █▄ █ █▄█",
+                                            " █  █▀█ ██▄   █ █ █▀█ █ ▀█ ██▄ █▀▄ █   █▄▄ █▄█ █ ▀ █ █▀▀ █▀█ █ ▀█  █"};
 
         static void Main(string[] args)
         {
@@ -74,7 +82,14 @@ namespace Parser
             {
                 Console.Write("                                   ");
                 Console.WriteLine(item);
-                
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+
+            foreach (var item in company)
+            {
+                Console.Write("                       ");
+                Console.WriteLine(item);
             }
 
             Console.ForegroundColor = ConsoleColor.White;
@@ -101,6 +116,7 @@ namespace Parser
                 Console.Write(" Загруженно "+lengNow+"Kb из " + ling+"Kb");
 
             } while (ling != lengNow);
+
             Console.CursorVisible = true;
             Console.WriteLine();
         }
@@ -173,10 +189,13 @@ namespace Parser
             Enumeration();
 
             Thread.Sleep(500);
-            //Console.ForegroundColor = ConsoleColor.Green;
-            //Console.WriteLine("Ожидайте окончательной загрузки");
-            //Console.ForegroundColor = ConsoleColor.White;
-            //FinishidDomlodal();
+
+            Console.WriteLine();
+            Console.Write("Распаковать скаченные главы(Да/Нет): ");
+            string answer = Console.ReadLine().ToLower().Trim();
+            if (answer == "да" || answer == "yes" || answer == "y" || answer == "д")
+                Unpacking();
+
         }
 
         /// <summary>
@@ -190,7 +209,6 @@ namespace Parser
                 string html = HtmlPack(link);
                 string linkfile = GetHref(html);
                 LinkFile = linkfile;
-                Console.WriteLine(LinkFile);
 
                 if (linkfile == "" || System.IO.Path.GetExtension(linkfile) != ".zip")
                 {
@@ -201,6 +219,8 @@ namespace Parser
                 {
                     DomlodalFile(linkfile, Path + Name + "_" + Tom + "_" + glav+".zip");
                     LastFile = Path + Name + "_" + Tom + "_" + glav + ".zip";
+                    Files.Add(LastFile);
+                    Console.WriteLine(LinkFile);
                     FinishidDomlodal();
                 }
             }
@@ -238,30 +258,6 @@ namespace Parser
         /// <returns></returns>
         public static string GetHref(string input)
         {
-            //string res = "";
-
-            //Regex reg = new Regex(@"\w+:[\/]*\w+[.](manga-online.biz)[\/]\w+[\/]\w+[\/]\w+[\/]\w+[.]\w+");
-            //Regex reg2 = new Regex(@"(https)[:][\/]+\w+[.](manga-online.biz)[\/]\w+[\/]\w+[\/]\w+[\/]\w+[\/]\w+[.]\w+");
-
-            //if(reg.IsMatch(input))
-            //{
-            //    MatchCollection mt = reg.Matches(input);
-
-            //    foreach (var item in mt)
-            //    {
-            //        res = item.ToString();
-            //    }
-            //}
-            //if(reg2.IsMatch(input))
-            //{
-            //    MatchCollection mt = reg2.Matches(input);
-
-            //    foreach (var item in mt)
-            //    {
-            //        res = item.ToString();
-            //    }
-            //}
-
             Regex reg = new Regex(@"(https)[:][\/]+\w+[.](manga-online.biz)[\/]\w+[\/]\w+[\/]\w+[-]\w+[.](zip)");
 
             return reg.Match(input).Value.ToString();
@@ -283,5 +279,33 @@ namespace Parser
             }
         }
 
+        /// <summary>
+        /// Извлечь из архива.
+        /// </summary>
+        private static void Unpacking()
+        {
+            if (!Directory.Exists(Path + Name))
+                Directory.CreateDirectory(Path + Name);
+
+            foreach (var item in Files)
+            {
+                using (ZipArchive zipArchive = ZipFile.Open(item, ZipArchiveMode.Update))
+                {
+                    Console.WriteLine("Распаковывается: "+ System.IO.Path.GetFileNameWithoutExtension(item));
+                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                    {
+                        string pathExtractFile = Path + Name + "\\" + System.IO.Path.GetFileNameWithoutExtension(item) + "_" + entry.Name;
+                        zipArchive.Entries.FirstOrDefault(x => x.Name == entry.Name)?.ExtractToFile(pathExtractFile);
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Готово...");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+                File.Delete(item);
+            }
+
+        }
     }
 }
